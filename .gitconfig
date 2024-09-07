@@ -1,0 +1,10 @@
+[user]
+	name = aonosomeday
+	email = 180724451+aonosomeday@users.noreply.github.com
+	signingkey = 76C5116D85E27FEB
+[ghq]
+	root = /home/aonosomeday/projects
+[init]
+	defaultBranch = main
+[commit]
+	gpgsign = true
