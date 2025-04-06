@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/aonosomeday/completions:"* ]]; then export FPATH="/home/aonosomeday/completions:$FPATH"; fi
 ### PATH
 # Golang
 export PATH=$PATH:$HOME/go/bin
@@ -74,4 +76,23 @@ alias gp="ghq_peco"
 alias gpc="ghq_peco && code ."
 ### End of functions
 
+### tmux
+SESSION_NAME="aono"
+
+if [[ "$ENABLE_TMUX" = "1" ]] && [[ -z "$TMUX" && -z "$STY" ]] && type tmux >/dev/null 2>&1; then
+	if [[ "$OPEN_HOMEDIR" = "1" ]]; then
+		cd /home/aonosomeday
+	fi
+
+	echo a
+
+	if tmux has-session -t ${SESSION_NAME}; then
+		tmux attach -t ${SESSION_NAME} && exit
+	else
+		tmux new -s ${SESSION_NAME} && exit
+	fi
+fi
+### End of tmux startup
+
+. "/home/aonosomeday/.deno/env"
 
