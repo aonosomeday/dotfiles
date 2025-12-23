@@ -1,32 +1,32 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/home/aonosomeday/completions:"* ]]; then export FPATH="/home/aonosomeday/completions:$FPATH"; fi
-### PATH
-# Golang
-export PATH=$PATH:$HOME/go/bin
-### End of PATH
+### tmux startup
+SESSION_NAME=$(whoami)
 
-### gpg-agent setup
-export GPG_TTY=$(tty)
-gpg-connect-agent updatestartuptty /bye>/dev/null
+if [[ "$ENABLE_TMUX" = "1" ]] && [[ -z "$TMUX" && -z "$STY" ]] && type tmux >/dev/null 2>&1; then
+	if [[ "$OPEN_HOMEDIR" = "1" ]]; then
+		cd $HOME
+	fi
 
-unset SSH_AGENT_PID
-if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-	export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+	if tmux has-session -t ${SESSION_NAME}; then
+		tmux attach -t ${SESSION_NAME} && exit
+	else
+		tmux new -s ${SESSION_NAME} && exit
+	fi
 fi
-### End of gpg-agent setup
+### End of tmux startup
 
-# Lines configured by zsh-newuser-install
+### Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
 bindkey -e
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename '/home/aonosomeday/.zshrc'
+### End of lines configured by zsh-newuser-install
+
+### The following lines were added by compinstall
+zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
 compinit
-# End of lines added by compinstall
+### End of lines added by compinstall
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -76,23 +76,24 @@ alias gp="ghq_peco"
 alias gpc="ghq_peco && code ."
 ### End of functions
 
-### tmux
-SESSION_NAME="aono"
+### Aliases
+alias bat="batcat"
+### End of aliases
 
-if [[ "$ENABLE_TMUX" = "1" ]] && [[ -z "$TMUX" && -z "$STY" ]] && type tmux >/dev/null 2>&1; then
-	if [[ "$OPEN_HOMEDIR" = "1" ]]; then
-		cd /home/aonosomeday
-	fi
-
-	echo a
-
-	if tmux has-session -t ${SESSION_NAME}; then
-		tmux attach -t ${SESSION_NAME} && exit
-	else
-		tmux new -s ${SESSION_NAME} && exit
-	fi
+### Completions
+# Deno
+if [[ ":$FPATH:" != *":$HOME/completions:"* ]]; then
+	export FPATH="$HOME/completions:$FPATH"
 fi
-### End of tmux startup
+### End of completions
 
-. "/home/aonosomeday/.deno/env"
+### gpg-agent setup
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye>/dev/null
+
+unset SSH_AGENT_PID
+if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+	export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+fi
+### End of gpg-agent setup
 
